@@ -21,23 +21,23 @@ const DepositPage = () => {
   const [coinAmount, setCoinAmount] = useState('');
   const [showRecords, setShowRecords] = useState(false);
 
-  // Real wallet addresses and QR codes
+  // Real wallet addresses and QR codes with updated images
   const walletData = {
     'BTC': {
       address: 'bc1qerkz35fpm895yu6ktnvajp9eepe4yg2u84f6v6',
-      qrCode: 'https://customer-assets.emergentagent.com/job_marketwatch-app/artifacts/fhlm6o00_image.png'
+      qrCode: 'https://customer-assets.emergentagent.com/job_marketwatch-app/artifacts/rqdaxirp_5897763252107069860_120.jpg'
     },
     'USDT-TRC20': {
       address: 'TXrJGy8P4MohRcjCNZRSK5zvv1ZP4YNRjc',
-      qrCode: 'https://customer-assets.emergentagent.com/job_marketwatch-app/artifacts/sseb6ewa_image.png'
+      qrCode: 'https://customer-assets.emergentagent.com/job_marketwatch-app/artifacts/n61yv372_5897763252107069861_120.jpg'
     },
     'USDT-ERC20': {
       address: 'TXrJGy8P4MohRcjCNZRSK5zvv1ZP4YNRjc', // Using same USDT address for now
-      qrCode: 'https://customer-assets.emergentagent.com/job_marketwatch-app/artifacts/sseb6ewa_image.png'
+      qrCode: 'https://customer-assets.emergentagent.com/job_marketwatch-app/artifacts/n61yv372_5897763252107069861_120.jpg'
     },
     'ETH': {
       address: 'bc1qerkz35fpm895yu6ktnvajp9eepe4yg2u84f6v6', // Using BTC address as placeholder
-      qrCode: 'https://customer-assets.emergentagent.com/job_marketwatch-app/artifacts/fhlm6o00_image.png'
+      qrCode: 'https://customer-assets.emergentagent.com/job_marketwatch-app/artifacts/rqdaxirp_5897763252107069860_120.jpg'
     }
   };
 
