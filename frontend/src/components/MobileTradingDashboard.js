@@ -20,12 +20,14 @@ import { useTheme } from '../contexts/ThemeContext';
 import ThemeToggle from './ThemeToggle';
 import MobileNavigation from './MobileNavigation';
 import TradingChart from './TradingChart';
+import TradingPositionsFooter from './TradingPositionsFooter';
 
 const MobileTradingDashboard = () => {
   const [assets] = useState(mockAllAssets);
   const [selectedAsset, setSelectedAsset] = useState(mockAllAssets[0]);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [accountBalance] = useState(15215.13);
+  const [showPositionsFooter, setShowPositionsFooter] = useState(true);
 
   const { user } = useAuth();
   const { isDark } = useTheme();
@@ -49,7 +51,7 @@ const MobileTradingDashboard = () => {
   return (
     <div className={`min-h-screen ${
       isDark ? 'bg-[#0a192f] text-white' : 'bg-gray-50 text-gray-900'
-    }`}>
+    }`} style={{ paddingBottom: showPositionsFooter ? '320px' : '0' }}>
       {/* Mobile Header */}
       <header className={`${
         isDark ? 'bg-[#112240] border-gray-700' : 'bg-white border-gray-200'
@@ -238,7 +240,7 @@ const MobileTradingDashboard = () => {
           </CardContent>
         </Card>
 
-        {/* Quick Actions */}
+        {/* Quick Actions - Changed from Deposit/Withdraw to Buy/Sell */}
         <Card className={`${
           isDark ? 'bg-[#112240] border-gray-700' : 'bg-white border-gray-200'
         }`}>
@@ -251,24 +253,25 @@ const MobileTradingDashboard = () => {
             
             <div className="grid grid-cols-2 gap-3">
               <Button
-                onClick={() => navigate('/dashboard/deposit')}
                 className="bg-green-600 hover:bg-green-700 text-white h-12"
               >
-                Deposit
+                Buy
               </Button>
               <Button
-                onClick={() => navigate('/dashboard/withdrawal')}
                 className="bg-red-600 hover:bg-red-700 text-white h-12"
               >
-                Withdrawal
+                Sell
               </Button>
             </div>
           </CardContent>
         </Card>
-
-        {/* Additional spacing for mobile navigation */}
-        <div className="h-20"></div>
       </div>
+
+      {/* Trading Positions Footer */}
+      <TradingPositionsFooter 
+        isVisible={showPositionsFooter}
+        onClose={() => setShowPositionsFooter(false)}
+      />
     </div>
   );
 };

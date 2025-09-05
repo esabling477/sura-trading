@@ -23,7 +23,11 @@ import {
   TrendingUp,
   TrendingDown,
   Plus,
-  Minus
+  Minus,
+  BarChart3,
+  Menu,
+  ArrowDownCircle,
+  ArrowUpCircle
 } from 'lucide-react';
 import { 
   mockAllAssets,
@@ -35,6 +39,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { useTheme } from '../contexts/ThemeContext';
 import ThemeToggle from './ThemeToggle';
 import TradingChart from './TradingChart';
+import TradingPositionsFooter from './TradingPositionsFooter';
 
 const TradingDashboard = () => {
   const [assets, setAssets] = useState(mockAllAssets);
@@ -45,6 +50,8 @@ const TradingDashboard = () => {
   const [orderType, setOrderType] = useState('buy');
   const [orderAmount, setOrderAmount] = useState('0');
   const [lastUpdated, setLastUpdated] = useState(new Date());
+  const [showPositionsFooter, setShowPositionsFooter] = useState(true);
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
 
   const { user, logout } = useAuth();
   const { isDark } = useTheme();
@@ -92,6 +99,9 @@ const TradingDashboard = () => {
       } border-b flex items-center justify-between px-4 z-10`}>
         <div className="flex items-center space-x-4">
           <div className="flex items-center space-x-2">
+            <BarChart3 className={`h-8 w-8 ${
+              isDark ? 'text-[#64ffda]' : 'text-blue-600'
+            }`} />
             <div className={`text-xl font-bold ${
               isDark ? 'text-[#64ffda]' : 'text-blue-600'
             }`}>
@@ -105,7 +115,7 @@ const TradingDashboard = () => {
           </div>
           
           {/* Search */}
-          <div className="relative">
+          <div className="relative hidden md:block">
             <Search className={`absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 ${
               isDark ? 'text-gray-400' : 'text-gray-500'
             }`} />
@@ -123,6 +133,34 @@ const TradingDashboard = () => {
         </div>
 
         <div className="flex items-center space-x-4">
+          {/* Desktop Actions */}
+          <div className="hidden md:flex items-center space-x-2">
+            <Button 
+              onClick={() => navigate('/dashboard/deposit')}
+              size="sm"
+              className="bg-green-600 hover:bg-green-700 text-white"
+            >
+              <ArrowDownCircle className="h-4 w-4 mr-1" />
+              Deposit
+            </Button>
+            <Button 
+              onClick={() => navigate('/dashboard/withdrawal')}
+              size="sm"
+              className="bg-red-600 hover:bg-red-700 text-white"
+            >
+              <ArrowUpCircle className="h-4 w-4 mr-1" />
+              Withdraw
+            </Button>
+          </div>
+
+          <div className="hidden sm:block">
+            <span className={`text-sm ${
+              isDark ? 'text-gray-400' : 'text-gray-600'
+            }`}>
+              Last updated: {lastUpdated.toLocaleTimeString()}
+            </span>
+          </div>
+          
           <Button 
             onClick={handleRefresh}
             size="sm"
@@ -132,13 +170,15 @@ const TradingDashboard = () => {
             <RefreshCw className="h-4 w-4" />
           </Button>
           
-          <div className="flex items-center space-x-2">
-            <Moon className={`h-4 w-4 ${isDark ? 'text-gray-400' : 'text-gray-600'}`} />
-            <Globe className={`h-4 w-4 ${isDark ? 'text-gray-400' : 'text-gray-600'}`} />
-            <span className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
-              Loan Financial English Logout
-            </span>
-          </div>
+          {/* Mobile Menu Button */}
+          <Button
+            onClick={() => setShowMobileMenu(!showMobileMenu)}
+            size="sm"
+            variant="ghost"
+            className="md:hidden"
+          >
+            <Menu className="h-5 w-5" />
+          </Button>
 
           <ThemeToggle />
 
@@ -159,6 +199,21 @@ const TradingDashboard = () => {
             <DropdownMenuContent className={`w-56 ${
               isDark ? 'bg-[#112240] border-gray-700' : 'bg-white border-gray-200'
             }`} align="end">
+              <div className="flex items-center justify-start gap-2 p-2">
+                <div className="flex flex-col space-y-1 leading-none">
+                  <p className={`font-medium ${
+                    isDark ? 'text-white' : 'text-gray-900'
+                  }`}>
+                    {user?.name}
+                  </p>
+                  <p className={`text-xs ${
+                    isDark ? 'text-gray-400' : 'text-gray-600'
+                  }`}>
+                    {user?.email}
+                  </p>
+                </div>
+              </div>
+              <DropdownMenuSeparator />
               <DropdownMenuItem className={`${
                 isDark ? 'text-gray-300 hover:bg-gray-700' : 'text-gray-700 hover:bg-gray-100'
               }`}>
@@ -188,10 +243,35 @@ const TradingDashboard = () => {
         </div>
       </header>
 
+      {/* Mobile Menu Overlay */}
+      {showMobileMenu && (
+        <div className="fixed inset-0 z-40 md:hidden">
+          <div className="absolute inset-0 bg-black bg-opacity-50" onClick={() => setShowMobileMenu(false)} />
+          <div className={`absolute top-14 right-0 w-64 ${
+            isDark ? 'bg-[#112240] border-gray-700' : 'bg-white border-gray-200'
+          } border-l shadow-xl p-4 space-y-4`}>
+            <Button 
+              onClick={() => navigate('/dashboard/deposit')}
+              className="w-full bg-green-600 hover:bg-green-700 text-white"
+            >
+              <ArrowDownCircle className="h-4 w-4 mr-2" />
+              Deposit
+            </Button>
+            <Button 
+              onClick={() => navigate('/dashboard/withdrawal')}
+              className="w-full bg-red-600 hover:bg-red-700 text-white"
+            >
+              <ArrowUpCircle className="h-4 w-4 mr-2" />
+              Withdraw
+            </Button>
+          </div>
+        </div>
+      )}
+
       {/* Left Sidebar - Asset List */}
       <div className={`w-80 mt-14 ${
         isDark ? 'bg-[#112240] border-gray-700' : 'bg-white border-gray-200'
-      } border-r flex flex-col`}>
+      } border-r flex flex-col`} style={{ height: showPositionsFooter ? 'calc(100vh - 56px - 320px)' : 'calc(100vh - 56px)' }}>
         <ScrollArea className="flex-1">
           <div className="p-2">
             {filteredAssets.map((asset) => (
@@ -249,7 +329,7 @@ const TradingDashboard = () => {
       </div>
 
       {/* Main Content Area */}
-      <div className="flex-1 mt-14 flex">
+      <div className="flex-1 mt-14 flex" style={{ height: showPositionsFooter ? 'calc(100vh - 56px - 320px)' : 'calc(100vh - 56px)' }}>
         {/* Chart Area */}
         <div className="flex-1 p-4">
           <Card className={`h-full ${
@@ -257,7 +337,9 @@ const TradingDashboard = () => {
           }`}>
             <CardContent className="p-0 h-full">
               {/* Chart Header */}
-              <div className="p-4 border-b border-gray-700">
+              <div className={`p-4 border-b ${
+                isDark ? 'border-gray-700' : 'border-gray-200'
+              }`}>
                 <div className="flex items-center justify-between">
                   <div>
                     <h2 className={`text-xl font-bold ${
@@ -531,6 +613,12 @@ const TradingDashboard = () => {
           </div>
         </div>
       </div>
+
+      {/* Trading Positions Footer */}
+      <TradingPositionsFooter 
+        isVisible={showPositionsFooter}
+        onClose={() => setShowPositionsFooter(false)}
+      />
     </div>
   );
 };
