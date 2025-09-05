@@ -1,19 +1,42 @@
 import React from "react";
 import "./App.css";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { ThemeProvider } from "./contexts/ThemeContext";
+import { AuthProvider } from "./contexts/AuthContext";
 import Dashboard from "./components/Dashboard";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import ForgotPassword from "./pages/ForgotPassword";
+import ProtectedRoute from "./components/ProtectedRoute";
 import { Toaster } from "./components/ui/toaster";
 
 function App() {
   return (
     <div className="App">
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-        </Routes>
-      </BrowserRouter>
-      <Toaster />
+      <ThemeProvider>
+        <AuthProvider>
+          <BrowserRouter>
+            <Routes>
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
+              <Route 
+                path="/dashboard" 
+                element={
+                  <ProtectedRoute>
+                    <Dashboard />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/" 
+                element={<Navigate to="/dashboard" replace />} 
+              />
+            </Routes>
+          </BrowserRouter>
+          <Toaster />
+        </AuthProvider>
+      </ThemeProvider>
     </div>
   );
 }
