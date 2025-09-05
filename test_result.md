@@ -102,7 +102,7 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Test the GT Trading cryptocurrency dashboard comprehensively with authentication, dashboard features, theme/responsiveness, and key elements verification"
+user_problem_statement: "Test the new GT Trading professional trading dashboard comprehensively with authentication, professional trading interface, forex pairs, trading controls, and mobile responsiveness"
 
 frontend:
   - task: "Login page with demo credentials"
