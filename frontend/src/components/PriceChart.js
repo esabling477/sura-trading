@@ -1,10 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { generateMockChartData } from '../data/mockData';
+import { useTheme } from '../contexts/ThemeContext';
 
 const PriceChart = ({ coinId }) => {
   const canvasRef = useRef(null);
   const [chartData, setChartData] = useState([]);
   const [hoveredPoint, setHoveredPoint] = useState(null);
+  const { isDark } = useTheme();
 
   useEffect(() => {
     // Generate mock chart data for the selected coin
@@ -39,8 +41,14 @@ const PriceChart = ({ coinId }) => {
     const maxPrice = Math.max(...prices);
     const priceRange = maxPrice - minPrice;
 
+    // Theme-based colors
+    const gridColor = isDark ? '#1e293b' : '#e5e7eb';
+    const lineColor = isDark ? '#64ffda' : '#2563eb';
+    const areaColor = isDark ? 'rgba(100, 255, 218, 0.1)' : 'rgba(37, 99, 235, 0.1)';
+    const textColor = isDark ? '#64748b' : '#6b7280';
+
     // Draw grid lines
-    ctx.strokeStyle = '#1e293b';
+    ctx.strokeStyle = gridColor;
     ctx.lineWidth = 1;
     
     // Horizontal grid lines
@@ -62,7 +70,7 @@ const PriceChart = ({ coinId }) => {
     }
 
     // Draw price line
-    ctx.strokeStyle = '#64ffda';
+    ctx.strokeStyle = lineColor;
     ctx.lineWidth = 2;
     ctx.beginPath();
 
@@ -80,7 +88,7 @@ const PriceChart = ({ coinId }) => {
     ctx.stroke();
 
     // Draw area under the line
-    ctx.fillStyle = 'rgba(100, 255, 218, 0.1)';
+    ctx.fillStyle = areaColor;
     ctx.beginPath();
     
     chartData.forEach((point, index) => {
@@ -100,8 +108,8 @@ const PriceChart = ({ coinId }) => {
     ctx.fill();
 
     // Draw price labels
-    ctx.fillStyle = '#64748b';
-    ctx.font = '12px Inter, sans-serif';
+    ctx.fillStyle = textColor;
+    ctx.font = '12px Inter, system-ui, sans-serif';
     ctx.textAlign = 'right';
     
     for (let i = 0; i <= 5; i++) {
@@ -133,7 +141,7 @@ const PriceChart = ({ coinId }) => {
       const y = rect.height - padding - ((hoveredPoint.price - minPrice) / priceRange) * chartHeight;
       
       // Draw vertical line
-      ctx.strokeStyle = '#64ffda';
+      ctx.strokeStyle = lineColor;
       ctx.lineWidth = 1;
       ctx.setLineDash([5, 5]);
       ctx.beginPath();
@@ -143,7 +151,7 @@ const PriceChart = ({ coinId }) => {
       ctx.setLineDash([]);
       
       // Draw point
-      ctx.fillStyle = '#64ffda';
+      ctx.fillStyle = lineColor;
       ctx.beginPath();
       ctx.arc(x, y, 4, 0, 2 * Math.PI);
       ctx.fill();
@@ -154,21 +162,21 @@ const PriceChart = ({ coinId }) => {
       const tooltipX = x > rect.width / 2 ? x - tooltipWidth - 10 : x + 10;
       const tooltipY = y - tooltipHeight / 2;
       
-      ctx.fillStyle = '#1e293b';
+      ctx.fillStyle = isDark ? '#1e293b' : '#ffffff';
       ctx.fillRect(tooltipX, tooltipY, tooltipWidth, tooltipHeight);
       
-      ctx.strokeStyle = '#64ffda';
+      ctx.strokeStyle = lineColor;
       ctx.lineWidth = 1;
       ctx.strokeRect(tooltipX, tooltipY, tooltipWidth, tooltipHeight);
       
-      ctx.fillStyle = '#ffffff';
-      ctx.font = '12px Inter, sans-serif';
+      ctx.fillStyle = isDark ? '#ffffff' : '#000000';
+      ctx.font = '12px Inter, system-ui, sans-serif';
       ctx.textAlign = 'left';
       ctx.fillText(`$${hoveredPoint.price.toFixed(2)}`, tooltipX + 8, tooltipY + 16);
       ctx.fillText(new Date(hoveredPoint.date).toLocaleDateString(), tooltipX + 8, tooltipY + 32);
     }
 
-  }, [chartData, hoveredPoint]);
+  }, [chartData, hoveredPoint, isDark]);
 
   const handleMouseMove = (event) => {
     if (!chartData.length) return;
@@ -201,12 +209,14 @@ const PriceChart = ({ coinId }) => {
         ref={canvasRef}
         width="800"
         height="400"
-        className="w-full h-80 cursor-crosshair"
+        className="w-full h-60 sm:h-80 cursor-crosshair"
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
-        style={{ width: '100%', height: '320px' }}
+        style={{ width: '100%' }}
       />
-      <div className="absolute top-4 left-4 text-sm text-gray-400">
+      <div className={`absolute top-4 left-4 text-sm ${
+        isDark ? 'text-gray-400' : 'text-gray-600'
+      }`}>
         {chartData.length > 0 && (
           <div>
             Price range: ${Math.min(...chartData.map(d => d.price)).toFixed(2)} - ${Math.max(...chartData.map(d => d.price)).toFixed(2)}
