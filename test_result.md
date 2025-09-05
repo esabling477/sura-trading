@@ -578,8 +578,8 @@ test_plan:
 
 metadata:
   created_by: "testing_agent"
-  version: "2.0"
-  test_sequence: 2
+  version: "3.0"
+  test_sequence: 3
 
 test_plan:
   current_focus:
