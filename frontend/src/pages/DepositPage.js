@@ -29,11 +29,11 @@ const DepositPage = () => {
     },
     'USDT-TRC20': {
       address: 'TXrJGy8P4MohRcjCNZRSK5zvv1ZP4YNRjc',
-      qrCode: 'https://customer-assets.emergentagent.com/job_marketwatch-app/artifacts/n61yv372_5897763252107069861_120.jpg'
+      qrCode: 'https://customer-assets.emergentagent.com/job_marketwatch-app/artifacts/nq6ofw9y_5897763252107069859_109.jpg'
     },
     'USDT-ERC20': {
       address: 'TXrJGy8P4MohRcjCNZRSK5zvv1ZP4YNRjc', // Using same USDT address for now
-      qrCode: 'https://customer-assets.emergentagent.com/job_marketwatch-app/artifacts/n61yv372_5897763252107069861_120.jpg'
+      qrCode: 'https://customer-assets.emergentagent.com/job_marketwatch-app/artifacts/nq6ofw9y_5897763252107069859_109.jpg'
     },
     'ETH': {
       address: 'bc1qerkz35fpm895yu6ktnvajp9eepe4yg2u84f6v6', // Using BTC address as placeholder
