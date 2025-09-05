@@ -460,6 +460,16 @@ test_plan:
   stuck_tasks: []
   test_all: false
   test_priority: "completed"
+  mobile_testing_completed: true
+  mobile_features_tested:
+    - "Mobile Authentication (375x812 viewport)"
+    - "Mobile Dashboard with account balance and top assets"
+    - "Mobile Navigation Menu with hamburger functionality"
+    - "Mobile Account Management Page (/dashboard/mine)"
+    - "Mobile Deposit Page (/dashboard/deposit)"
+    - "Mobile Withdrawal Page (/dashboard/withdrawal)"
+    - "Mobile Responsive Design and viewport detection"
+    - "Desktop vs Mobile Detection and switching"
 
 agent_communication:
     - agent: "testing"
