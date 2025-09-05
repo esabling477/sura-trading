@@ -14,8 +14,6 @@ import {
 } from './ui/dropdown-menu';
 import { 
   Search,
-  Moon,
-  Globe,
   User,
   LogOut,
   Settings,
@@ -24,10 +22,7 @@ import {
   TrendingDown,
   Plus,
   Minus,
-  BarChart3,
-  Menu,
-  ArrowDownCircle,
-  ArrowUpCircle
+  BarChart3
 } from 'lucide-react';
 import { 
   mockAllAssets,
@@ -40,6 +35,7 @@ import { useTheme } from '../contexts/ThemeContext';
 import ThemeToggle from './ThemeToggle';
 import TradingChart from './TradingChart';
 import TradingPositionsFooter from './TradingPositionsFooter';
+import DesktopSidebarMenu from './DesktopSidebarMenu';
 
 const TradingDashboard = () => {
   const [assets, setAssets] = useState(mockAllAssets);
@@ -51,7 +47,7 @@ const TradingDashboard = () => {
   const [orderAmount, setOrderAmount] = useState('0');
   const [lastUpdated, setLastUpdated] = useState(new Date());
   const [showPositionsFooter, setShowPositionsFooter] = useState(true);
-  const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
 
   const { user, logout } = useAuth();
   const { isDark } = useTheme();
@@ -90,11 +86,11 @@ const TradingDashboard = () => {
   };
 
   return (
-    <div className={`h-screen flex ${
+    <div className={`h-screen flex flex-col ${
       isDark ? 'bg-[#0a192f] text-white' : 'bg-gray-50 text-gray-900'
     }`}>
       {/* Header */}
-      <header className={`absolute top-0 left-0 right-0 h-14 ${
+      <header className={`h-14 ${
         isDark ? 'bg-[#112240] border-gray-700' : 'bg-white border-gray-200'
       } border-b flex items-center justify-between px-4 z-10`}>
         <div className="flex items-center space-x-4">
@@ -115,7 +111,7 @@ const TradingDashboard = () => {
           </div>
           
           {/* Search */}
-          <div className="relative hidden md:block">
+          <div className="relative">
             <Search className={`absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 ${
               isDark ? 'text-gray-400' : 'text-gray-500'
             }`} />
@@ -133,26 +129,6 @@ const TradingDashboard = () => {
         </div>
 
         <div className="flex items-center space-x-4">
-          {/* Desktop Actions */}
-          <div className="hidden md:flex items-center space-x-2">
-            <Button 
-              onClick={() => navigate('/dashboard/deposit')}
-              size="sm"
-              className="bg-green-600 hover:bg-green-700 text-white"
-            >
-              <ArrowDownCircle className="h-4 w-4 mr-1" />
-              Deposit
-            </Button>
-            <Button 
-              onClick={() => navigate('/dashboard/withdrawal')}
-              size="sm"
-              className="bg-red-600 hover:bg-red-700 text-white"
-            >
-              <ArrowUpCircle className="h-4 w-4 mr-1" />
-              Withdraw
-            </Button>
-          </div>
-
           <div className="hidden sm:block">
             <span className={`text-sm ${
               isDark ? 'text-gray-400' : 'text-gray-600'
@@ -168,16 +144,6 @@ const TradingDashboard = () => {
             className={isDark ? 'text-gray-400 hover:text-white' : 'text-gray-600 hover:text-gray-900'}
           >
             <RefreshCw className="h-4 w-4" />
-          </Button>
-          
-          {/* Mobile Menu Button */}
-          <Button
-            onClick={() => setShowMobileMenu(!showMobileMenu)}
-            size="sm"
-            variant="ghost"
-            className="md:hidden"
-          >
-            <Menu className="h-5 w-5" />
           </Button>
 
           <ThemeToggle />
@@ -243,93 +209,74 @@ const TradingDashboard = () => {
         </div>
       </header>
 
-      {/* Mobile Menu Overlay */}
-      {showMobileMenu && (
-        <div className="fixed inset-0 z-40 md:hidden">
-          <div className="absolute inset-0 bg-black bg-opacity-50" onClick={() => setShowMobileMenu(false)} />
-          <div className={`absolute top-14 right-0 w-64 ${
-            isDark ? 'bg-[#112240] border-gray-700' : 'bg-white border-gray-200'
-          } border-l shadow-xl p-4 space-y-4`}>
-            <Button 
-              onClick={() => navigate('/dashboard/deposit')}
-              className="w-full bg-green-600 hover:bg-green-700 text-white"
-            >
-              <ArrowDownCircle className="h-4 w-4 mr-2" />
-              Deposit
-            </Button>
-            <Button 
-              onClick={() => navigate('/dashboard/withdrawal')}
-              className="w-full bg-red-600 hover:bg-red-700 text-white"
-            >
-              <ArrowUpCircle className="h-4 w-4 mr-2" />
-              Withdraw
-            </Button>
-          </div>
-        </div>
-      )}
+      {/* Main Content Area */}
+      <div className="flex flex-1 overflow-hidden">
+        {/* Left Sidebar Menu */}
+        <DesktopSidebarMenu 
+          isExpanded={isSidebarExpanded}
+          onToggle={() => setIsSidebarExpanded(!isSidebarExpanded)}
+        />
 
-      {/* Left Sidebar - Asset List */}
-      <div className={`w-80 mt-14 ${
-        isDark ? 'bg-[#112240] border-gray-700' : 'bg-white border-gray-200'
-      } border-r flex flex-col`} style={{ height: showPositionsFooter ? 'calc(100vh - 56px - 320px)' : 'calc(100vh - 56px)' }}>
-        <ScrollArea className="flex-1">
-          <div className="p-2">
-            {filteredAssets.map((asset) => (
-              <div
-                key={asset.id}
-                onClick={() => setSelectedAsset(asset)}
-                className={`flex items-center justify-between p-3 rounded-lg cursor-pointer transition-all mb-1 ${
-                  selectedAsset.id === asset.id
-                    ? (isDark ? 'bg-[#64ffda]/10 border-l-2 border-[#64ffda]' : 'bg-blue-50 border-l-2 border-blue-500')
-                    : (isDark ? 'hover:bg-[#0a192f]/50' : 'hover:bg-gray-50')
-                }`}
-              >
-                <div className="flex items-center space-x-3">
-                  <img 
-                    src={asset.image} 
-                    alt={asset.name}
-                    className="w-8 h-8 rounded-full"
-                    onError={(e) => {
-                      e.target.style.display = 'none';
-                    }}
-                  />
-                  <div>
+        {/* Assets List Sidebar */}
+        <div className={`w-80 ${
+          isDark ? 'bg-[#112240] border-gray-700' : 'bg-white border-gray-200'
+        } border-r flex flex-col`}>
+          <ScrollArea className="flex-1">
+            <div className="p-2">
+              {filteredAssets.map((asset) => (
+                <div
+                  key={asset.id}
+                  onClick={() => setSelectedAsset(asset)}
+                  className={`flex items-center justify-between p-3 rounded-lg cursor-pointer transition-all mb-1 ${
+                    selectedAsset.id === asset.id
+                      ? (isDark ? 'bg-[#64ffda]/10 border-l-2 border-[#64ffda]' : 'bg-blue-50 border-l-2 border-blue-500')
+                      : (isDark ? 'hover:bg-[#0a192f]/50' : 'hover:bg-gray-50')
+                  }`}
+                >
+                  <div className="flex items-center space-x-3">
+                    <img 
+                      src={asset.image} 
+                      alt={asset.name}
+                      className="w-8 h-8 rounded-full"
+                      onError={(e) => {
+                        e.target.style.display = 'none';
+                      }}
+                    />
+                    <div>
+                      <div className={`font-medium text-sm ${
+                        isDark ? 'text-white' : 'text-gray-900'
+                      }`}>
+                        {asset.symbol}
+                      </div>
+                      <div className={`text-xs ${
+                        isDark ? 'text-gray-400' : 'text-gray-600'
+                      }`}>
+                        {asset.name}
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="text-right">
                     <div className={`font-medium text-sm ${
                       isDark ? 'text-white' : 'text-gray-900'
                     }`}>
-                      {asset.symbol}
+                      {asset.symbol.includes('/') 
+                        ? formatPrice(asset.current_price, asset.symbol)
+                        : formatPrice(asset.current_price)
+                      }
                     </div>
-                    <div className={`text-xs ${
-                      isDark ? 'text-gray-400' : 'text-gray-600'
+                    <div className={`text-xs font-medium ${
+                      asset.price_change_percentage_24h >= 0 ? 'text-green-400' : 'text-red-400'
                     }`}>
-                      {asset.name}
+                      {formatPercentage(asset.price_change_percentage_24h)}
                     </div>
                   </div>
                 </div>
-                
-                <div className="text-right">
-                  <div className={`font-medium text-sm ${
-                    isDark ? 'text-white' : 'text-gray-900'
-                  }`}>
-                    {asset.symbol.includes('/') 
-                      ? formatPrice(asset.current_price, asset.symbol)
-                      : formatPrice(asset.current_price)
-                    }
-                  </div>
-                  <div className={`text-xs font-medium ${
-                    asset.price_change_percentage_24h >= 0 ? 'text-green-400' : 'text-red-400'
-                  }`}>
-                    {formatPercentage(asset.price_change_percentage_24h)}
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </ScrollArea>
-      </div>
+              ))}
+            </div>
+          </ScrollArea>
+        </div>
 
-      {/* Main Content Area */}
-      <div className="flex-1 mt-14 flex" style={{ height: showPositionsFooter ? 'calc(100vh - 56px - 320px)' : 'calc(100vh - 56px)' }}>
         {/* Chart Area */}
         <div className="flex-1 p-4">
           <Card className={`h-full ${
@@ -614,11 +561,15 @@ const TradingDashboard = () => {
         </div>
       </div>
 
-      {/* Trading Positions Footer */}
-      <TradingPositionsFooter 
-        isVisible={showPositionsFooter}
-        onClose={() => setShowPositionsFooter(false)}
-      />
+      {/* Static Trading Positions Footer */}
+      {showPositionsFooter && (
+        <div className="mt-auto">
+          <TradingPositionsFooter 
+            isVisible={showPositionsFooter}
+            onClose={() => setShowPositionsFooter(false)}
+          />
+        </div>
+      )}
     </div>
   );
 };

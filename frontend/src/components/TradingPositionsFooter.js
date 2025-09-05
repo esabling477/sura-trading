@@ -38,10 +38,10 @@ const TradingPositionsFooter = ({ isVisible, onClose }) => {
   if (!isVisible) return null;
 
   return (
-    <div className={`fixed bottom-0 left-0 right-0 z-30 ${
+    <div className={`${
       isDark ? 'bg-[#0a192f] border-gray-700' : 'bg-white border-gray-200'
-    } border-t`}>
-      <div className="h-80 flex flex-col">
+    } border-t h-80`}>
+      <div className="h-full flex flex-col">
         <Tabs defaultValue="positions" className="flex-1 flex flex-col">
           <div className="flex items-center justify-between p-4 pb-0">
             <TabsList className={`${
