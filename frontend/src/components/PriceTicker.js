@@ -4,8 +4,8 @@ import { formatPrice, formatPercentage } from '../data/mockData';
 
 const PriceTicker = ({ data }) => {
   return (
-    <div className="bg-[#112240] border-b border-gray-700 overflow-hidden">
-      <div className="flex animate-scroll whitespace-nowrap py-3">
+    <div className="bg-[#112240] border-b border-gray-700 overflow-hidden ticker-container" style={{ minHeight: '60px' }}>
+      <div className="flex animate-scroll whitespace-nowrap py-3" style={{ minHeight: '54px', alignItems: 'center' }}>
         {/* Duplicate the data for seamless scrolling */}
         {[...data, ...data].map((item, index) => (
           <div key={`${item.symbol}-${index}`} className="inline-flex items-center space-x-4 mx-8">
