@@ -583,21 +583,18 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Trading Positions Footer - Desktop and Mobile"
-    - "Desktop Deposit/Withdraw buttons visibility"
-    - "Mobile Quick Actions - Buy/Sell buttons"
-    - "Cross-Platform Layout Consistency"
-    - "Footer Integration and Layout Adjustments"
+    - "Updated Desktop Platform - Comprehensive Review Request Testing"
   stuck_tasks: []
   test_all: false
-  test_priority: "high_first"
-  new_features_testing: true
+  test_priority: "completed"
+  updated_desktop_testing: true
   focus_areas:
-    - "Trading positions footer functionality"
-    - "Desktop header button visibility"
-    - "Mobile quick actions changes"
-    - "Cross-platform consistency"
-    - "Footer integration"
+    - "New desktop sidebar menu system (collapsible)"
+    - "Removed big deposit/withdraw buttons from header"
+    - "Fixed static footer functionality"
+    - "New 4-column layout verification"
+    - "Authentication and navigation improvements"
+    - "Mobile vs desktop consistency"
 
 agent_communication:
     - agent: "testing"
