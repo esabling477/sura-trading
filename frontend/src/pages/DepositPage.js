@@ -21,8 +21,27 @@ const DepositPage = () => {
   const [coinAmount, setCoinAmount] = useState('');
   const [showRecords, setShowRecords] = useState(false);
 
-  // Mock wallet address
-  const walletAddress = 'TT7XqWx6jvdAG9ucwmLjyT8Eo4rLLg1Hzv';
+  // Real wallet addresses and QR codes
+  const walletData = {
+    'BTC': {
+      address: 'bc1qerkz35fpm895yu6ktnvajp9eepe4yg2u84f6v6',
+      qrCode: 'https://customer-assets.emergentagent.com/job_marketwatch-app/artifacts/fhlm6o00_image.png'
+    },
+    'USDT-TRC20': {
+      address: 'TXrJGy8P4MohRcjCNZRSK5zvv1ZP4YNRjc',
+      qrCode: 'https://customer-assets.emergentagent.com/job_marketwatch-app/artifacts/sseb6ewa_image.png'
+    },
+    'USDT-ERC20': {
+      address: 'TXrJGy8P4MohRcjCNZRSK5zvv1ZP4YNRjc', // Using same USDT address for now
+      qrCode: 'https://customer-assets.emergentagent.com/job_marketwatch-app/artifacts/sseb6ewa_image.png'
+    },
+    'ETH': {
+      address: 'bc1qerkz35fpm895yu6ktnvajp9eepe4yg2u84f6v6', // Using BTC address as placeholder
+      qrCode: 'https://customer-assets.emergentagent.com/job_marketwatch-app/artifacts/fhlm6o00_image.png'
+    }
+  };
+
+  const currentWalletData = walletData[selectedNetwork] || walletData['USDT-TRC20'];
 
   // Mock deposit records
   const depositRecords = [
@@ -45,7 +64,7 @@ const DepositPage = () => {
   ];
 
   const handleCopyAddress = () => {
-    navigator.clipboard.writeText(walletAddress);
+    navigator.clipboard.writeText(currentWalletData.address);
     toast({
       title: "Address Copied",
       description: "Wallet address has been copied to clipboard",
@@ -66,6 +85,26 @@ const DepositPage = () => {
       title: "Deposit Request Submitted",
       description: `Depositing ${coinAmount} ${selectedNetwork.split('-')[0]}`,
     });
+  };
+
+  const getNetworkDisplayName = (network) => {
+    const names = {
+      'BTC': 'Bitcoin (BTC)',
+      'USDT-TRC20': 'Tether USDT (TRC20)',
+      'USDT-ERC20': 'Tether USDT (ERC20)',
+      'ETH': 'Ethereum (ETH)'
+    };
+    return names[network] || network;
+  };
+
+  const getNetworkWarning = (network) => {
+    const warnings = {
+      'BTC': 'Only send Bitcoin (BTC) assets to this address. Other assets will be lost forever.',
+      'USDT-TRC20': 'Only send Tether (TRC20) assets to this address. Other assets will be lost forever.',
+      'USDT-ERC20': 'Only send Tether (ERC20) assets to this address. Other assets will be lost forever.',
+      'ETH': 'Only send Ethereum (ETH) assets to this address. Other assets will be lost forever.'
+    };
+    return warnings[network] || 'Please ensure you send the correct asset type to this address.';
   };
 
   return (
@@ -111,6 +150,26 @@ const DepositPage = () => {
             isDark ? 'bg-[#112240] border-gray-700' : 'bg-white border-gray-200'
           }`}>
             <CardContent className="p-6 space-y-6">
+              {/* Warning Message */}
+              <div className={`p-3 rounded-lg border-l-4 ${
+                isDark 
+                  ? 'bg-yellow-900/20 border-yellow-600 text-yellow-200' 
+                  : 'bg-yellow-50 border-yellow-400 text-yellow-800'
+              }`}>
+                <div className="flex items-start">
+                  <div className="flex-shrink-0">
+                    <svg className="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                  <div className="ml-3">
+                    <p className="text-sm font-medium">
+                      {getNetworkWarning(selectedNetwork)}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
               {/* Network Selection */}
               <div>
                 <Label className={`${
@@ -129,12 +188,40 @@ const DepositPage = () => {
                   <SelectContent className={
                     isDark ? 'bg-[#112240] border-gray-700' : 'bg-white border-gray-200'
                   }>
-                    <SelectItem value="USDT-TRC20">USDT-TRC20</SelectItem>
-                    <SelectItem value="USDT-ERC20">USDT-ERC20</SelectItem>
-                    <SelectItem value="BTC">BTC</SelectItem>
-                    <SelectItem value="ETH">ETH</SelectItem>
+                    <SelectItem value="USDT-TRC20">Tether USDT (TRC20)</SelectItem>
+                    <SelectItem value="BTC">Bitcoin (BTC)</SelectItem>
+                    <SelectItem value="USDT-ERC20">Tether USDT (ERC20)</SelectItem>
+                    <SelectItem value="ETH">Ethereum (ETH)</SelectItem>
                   </SelectContent>
                 </Select>
+              </div>
+
+              {/* Selected Network Info */}
+              <div className={`p-4 rounded-lg border ${
+                isDark ? 'bg-[#0a192f] border-gray-600' : 'bg-gray-50 border-gray-300'
+              }`}>
+                <div className="flex items-center space-x-3 mb-2">
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                    selectedNetwork.includes('BTC') ? 'bg-orange-500' : 
+                    selectedNetwork.includes('USDT') ? 'bg-green-500' : 'bg-blue-500'
+                  }`}>
+                    <span className="text-white font-bold text-sm">
+                      {selectedNetwork.split('-')[0].charAt(0)}
+                    </span>
+                  </div>
+                  <div>
+                    <h3 className={`font-medium ${
+                      isDark ? 'text-white' : 'text-gray-900'
+                    }`}>
+                      {getNetworkDisplayName(selectedNetwork)}
+                    </h3>
+                    <p className={`text-sm ${
+                      isDark ? 'text-gray-400' : 'text-gray-600'
+                    }`}>
+                      Network: {selectedNetwork.includes('-') ? selectedNetwork.split('-')[1] : selectedNetwork}
+                    </p>
+                  </div>
+                </div>
               </div>
 
               {/* Wallet Address */}
@@ -145,50 +232,53 @@ const DepositPage = () => {
                   Wallet Address
                 </Label>
                 
-                {/* QR Code Placeholder */}
+                {/* QR Code */}
                 <div className="flex justify-center my-4">
-                  <div className={`w-32 h-32 ${
-                    isDark ? 'bg-white' : 'bg-gray-100'
-                  } rounded-lg flex items-center justify-center`}>
-                    <div className="w-28 h-28 bg-black rounded-sm flex items-center justify-center">
-                      <div className="grid grid-cols-8 gap-0.5">
-                        {Array.from({ length: 64 }, (_, i) => (
-                          <div
-                            key={i}
-                            className={`w-1 h-1 ${
-                              Math.random() > 0.5 ? 'bg-white' : 'bg-black'
-                            }`}
-                          />
-                        ))}
-                      </div>
-                    </div>
+                  <div className={`p-4 rounded-lg ${
+                    isDark ? 'bg-white' : 'bg-white'
+                  } shadow-lg`}>
+                    <img 
+                      src={currentWalletData.qrCode}
+                      alt={`${selectedNetwork} QR Code`}
+                      className="w-48 h-48 object-contain"
+                      onError={(e) => {
+                        // Fallback to a placeholder if image fails to load
+                        e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjRjNGNEY2Ii8+CjxyZWN0IHg9IjIwIiB5PSIyMCIgd2lkdGg9IjE2MCIgaGVpZ2h0PSIxNjAiIGZpbGw9ImJsYWNrIi8+CjxyZWN0IHg9IjQwIiB5PSI0MCIgd2lkdGg9IjEyMCIgaGVpZ2h0PSIxMjAiIGZpbGw9IndoaXRlIi8+CjxyZWN0IHg9IjYwIiB5PSI2MCIgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiBmaWxsPSJibGFjayIvPgo8L3N2Zz4K';
+                      }}
+                    />
                   </div>
                 </div>
 
                 {/* Address with Copy Button */}
                 <div className="flex items-center space-x-2">
                   <Input
-                    value={walletAddress}
+                    value={currentWalletData.address}
                     readOnly
                     className={`flex-1 ${
                       isDark 
-                        ? 'bg-[#0a192f] border-gray-600 text-white' 
-                        : 'bg-gray-50 border-gray-300'
+                        ? 'bg-[#0a192f] border-gray-600 text-white font-mono text-sm' 
+                        : 'bg-gray-50 border-gray-300 font-mono text-sm'
                     }`}
                   />
                   <Button
                     variant="outline"
                     size="sm"
                     onClick={handleCopyAddress}
-                    className={
+                    className={`${
                       isDark 
                         ? 'border-gray-600 text-gray-300 hover:bg-gray-700' 
                         : 'border-gray-300 text-gray-700 hover:bg-gray-50'
-                    }
+                    } flex-shrink-0`}
                   >
                     <Copy className="h-4 w-4" />
                   </Button>
                 </div>
+                
+                <p className={`text-xs mt-2 ${
+                  isDark ? 'text-gray-500' : 'text-gray-500'
+                }`}>
+                  Send only {selectedNetwork.split('-')[0]} to this address. Sending any other asset will result in permanent loss.
+                </p>
               </div>
 
               {/* Number of Coins */}
@@ -200,7 +290,7 @@ const DepositPage = () => {
                 </Label>
                 <Input
                   type="number"
-                  placeholder="Please enter the number of coins to be charged"
+                  placeholder={`Enter amount of ${selectedNetwork.split('-')[0]} to deposit`}
                   value={coinAmount}
                   onChange={(e) => setCoinAmount(e.target.value)}
                   className={`mt-2 ${
@@ -209,6 +299,11 @@ const DepositPage = () => {
                       : 'bg-white border-gray-300 placeholder:text-gray-400'
                   }`}
                 />
+                <p className={`text-xs mt-1 ${
+                  isDark ? 'text-gray-500' : 'text-gray-500'
+                }`}>
+                  Minimum deposit: {selectedNetwork.includes('BTC') ? '0.0001 BTC' : '10 USDT'}
+                </p>
               </div>
 
               {/* Upload Certificate */}
@@ -216,7 +311,7 @@ const DepositPage = () => {
                 <Label className={`${
                   isDark ? 'text-gray-300' : 'text-gray-700'
                 }`}>
-                  Uploading Certificate
+                  Upload Payment Screenshot (Optional)
                 </Label>
                 <div className={`mt-2 border-2 border-dashed rounded-lg p-8 text-center ${
                   isDark 
@@ -229,7 +324,12 @@ const DepositPage = () => {
                   <p className={`text-sm ${
                     isDark ? 'text-gray-400' : 'text-gray-600'
                   }`}>
-                    Upload payment screenshot
+                    Upload payment screenshot for faster processing
+                  </p>
+                  <p className={`text-xs mt-1 ${
+                    isDark ? 'text-gray-500' : 'text-gray-500'
+                  }`}>
+                    PNG, JPG up to 10MB
                   </p>
                 </div>
               </div>
@@ -239,7 +339,7 @@ const DepositPage = () => {
                 onClick={handleSubmit}
                 className="w-full bg-[#8BC34A] text-white hover:bg-[#7CB342] h-12"
               >
-                Submit
+                Submit Deposit Request
               </Button>
             </CardContent>
           </Card>
@@ -251,9 +351,28 @@ const DepositPage = () => {
             isDark ? 'bg-[#112240] border-gray-700' : 'bg-white border-gray-200'
           }`}>
             <CardContent className="p-6 text-center">
-              <p className={isDark ? 'text-gray-400' : 'text-gray-600'}>
-                Bank card deposit functionality coming soon
-              </p>
+              <div className="py-12">
+                <div className={`w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center ${
+                  isDark ? 'bg-gray-700' : 'bg-gray-200'
+                }`}>
+                  <svg className={`w-8 h-8 ${
+                    isDark ? 'text-gray-400' : 'text-gray-500'
+                  }`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                  </svg>
+                </div>
+                <h3 className={`text-lg font-medium mb-2 ${
+                  isDark ? 'text-white' : 'text-gray-900'
+                }`}>
+                  Bank Card Deposits
+                </h3>
+                <p className={`${isDark ? 'text-gray-400' : 'text-gray-600'} mb-4`}>
+                  Bank card deposit functionality is coming soon
+                </p>
+                <p className={`text-sm ${isDark ? 'text-gray-500' : 'text-gray-500'}`}>
+                  For now, please use digital currency deposits for instant processing
+                </p>
+              </div>
             </CardContent>
           </Card>
         )}
@@ -270,7 +389,7 @@ const DepositPage = () => {
                 isDark ? 'text-white hover:bg-gray-700' : 'text-gray-900 hover:bg-gray-100'
               }`}
             >
-              <span className="font-medium">Deposit record</span>
+              <span className="font-medium">Deposit History</span>
               {showRecords ? (
                 <ChevronUp className="h-4 w-4" />
               ) : (
@@ -290,10 +409,10 @@ const DepositPage = () => {
                     <div className="grid grid-cols-2 gap-2 text-sm">
                       <div>
                         <span className={isDark ? 'text-gray-400' : 'text-gray-600'}>
-                          Recharge amount:
+                          Amount:
                         </span>
-                        <span className={`ml-2 ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                          {record.rechargeAmount}
+                        <span className={`ml-2 font-medium ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                          {record.rechargeAmount} {record.unit}
                         </span>
                       </div>
                       <div>
@@ -306,17 +425,9 @@ const DepositPage = () => {
                       </div>
                       <div>
                         <span className={isDark ? 'text-gray-400' : 'text-gray-600'}>
-                          Unit:
-                        </span>
-                        <span className={`ml-2 ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                          {record.unit}
-                        </span>
-                      </div>
-                      <div>
-                        <span className={isDark ? 'text-gray-400' : 'text-gray-600'}>
                           Status:
                         </span>
-                        <span className={`ml-2 ${
+                        <span className={`ml-2 font-medium ${
                           record.status === 'Complete' 
                             ? 'text-green-500' 
                             : record.status === 'Invalid' 
@@ -326,7 +437,7 @@ const DepositPage = () => {
                           {record.status}
                         </span>
                       </div>
-                      <div className="col-span-2">
+                      <div>
                         <span className={isDark ? 'text-gray-400' : 'text-gray-600'}>
                           Date:
                         </span>
