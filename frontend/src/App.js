@@ -3,7 +3,7 @@ import "./App.css";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { AuthProvider } from "./contexts/AuthContext";
-import Dashboard from "./components/Dashboard";
+import TradingDashboard from "./components/TradingDashboard";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import ForgotPassword from "./pages/ForgotPassword";
@@ -24,7 +24,7 @@ function App() {
                 path="/dashboard" 
                 element={
                   <ProtectedRoute>
-                    <Dashboard />
+                    <TradingDashboard />
                   </ProtectedRoute>
                 } 
               />
