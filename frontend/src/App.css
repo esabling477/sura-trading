@@ -23,6 +23,13 @@
   animation: scroll 30s linear infinite;
 }
 
+/* Ensure ticker is visible */
+.ticker-container {
+  overflow: hidden;
+  background-color: #112240;
+  border-bottom: 1px solid #374151;
+}
+
 /* Custom scrollbar styles */
 .scrollbar-thin {
   scrollbar-width: thin;
